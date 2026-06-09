@@ -1,281 +1,205 @@
-# AI Code Reviewer Prototype
+## Prompt Documentation
+Project Title
+## AI Code Review GitHub Action for C#
 
-## Project Overview
+## Purpose
+This document records the major prompts used during the development and execution of the AI Code Review GitHub Action.
 
-AI Code Reviewer Prototype is an AI-powered GitHub Action designed to automate code reviews for C# projects.
+Our project uses AI-assisted development for infrastructure setup and AI-powered dynamic code analysis through a cloud Large Language Model (Google Gemini 1.5 API).
 
-The system automatically analyzes Pull Requests, detects coding issues, checks adherence to C# best practices, and provides intelligent review comments directly within GitHub.
+## The documented prompts were used for:
 
-This project was developed as part of the AI Prototype Challenge.
+CI/CD pipeline generation
 
----
+Automated code review and vulnerability detection
 
-# Problem Statement
+Code remediation and fix suggestions
 
-Code reviews are an essential part of software development to ensure code quality, maintainability, and security.
+Project documentation and formatting
 
-However, traditional code reviews often face challenges such as:
+Prompt engineering
 
-* Time-consuming manual reviews
-* Delayed feedback cycles
-* Inconsistent review quality
-* Missed bugs and security vulnerabilities
+Single-agent automated workflow design
 
-The objective of this project is to automate the code review process using Artificial Intelligence.
+AI Development Usage
+AI coding assistants (ChatGPT, Claude, Gemini, Kiro) were used throughout development for:
 
----
+GitHub Actions YAML configuration
 
-# Solution
+Python backend development (review_agent.py)
 
-The AI Code Reviewer integrates directly with GitHub Pull Requests.
+Prompt engineering for the Gemini LLM
 
-When a developer creates or updates a Pull Request, the system:
+Debugging GitHub repository permissions
 
-1. Captures the Pull Request code changes
-2. Extracts the Git Diff
-3. Sends the code changes to Gemini AI
-4. Analyzes the code for quality issues
-5. Checks C# best practices
-6. Generates review suggestions
-7. Posts the review directly on GitHub
+Test case creation (C# vulnerabilities)
 
-This enables developers to receive instant feedback without leaving GitHub.
+Document structuring
 
----
+The development process followed an AI-assisted workflow as required by the challenge guidelines.
 
-# Key Features
+##Prompt 1: Challenge Constraint & Architecture Setup
+Objective
+Define the overarching architecture and challenge constraints for the AI Prototype to ensure strict compliance with mandatory hackathon requirements, including AI usage documentation, Agent Loop implementation, and API integrations.
 
-## Automated Pull Request Reviews
+Prompt
 
-Automatically reviews code whenever a Pull Request is opened or updated.
+Plaintext
+You are an AI development expert tasked with creating a solution for the AI Prototype Challenge. Your goal is to build a working prototype that meets all mandatory requirements and evaluation criteria.
 
----
+**Core Objective:**
+Design and document a complete AI solution prototype that demonstrates hands-on capability in AI agents, MCPs (Model Context Protocol), or external API/service integration. The solution must be shipping-ready code built using AI coding assistants.
 
-## AI-Powered Code Analysis
+**Mandatory Requirements (Non-Negotiable):**
+1. Use AI coding assistants (e.g., Claude, ChatGPT, Cursor, GitHub Copilot) throughout development—document this in your development notes
+2. Maintain a notes file recording all key prompts used during development with AI assistants
+3. Implement at least ONE of these capabilities:
+   - Agent Loop (autonomous agent with decision-making/iteration)
+   - MCP Tool (either built or consumed)
+   - External API/Service Integration
 
-Uses Google's Gemini AI model to analyze code changes and identify:
+**Technology Stack (Free/Open-Source Only):**
+- Source Control: GitHub
+- Languages: Python, Node.js, or .NET
+- Database: SQLite or PostgreSQL (Docker)
+- AI Models: Ollama or Free LLM Tiers
+- Data Sources: CSV/JSON
+- Integrations: Public APIs
+- Collaboration: Discord
 
-* Coding issues
-* Best practice violations
-* Potential bugs
-* Code quality concerns
+**Evaluation Criteria (What Success Looks Like):**
+- Working code shipped with demonstrated AI assistant usage
+- Hands-on skill in building AI Agents or MCPs
+- Successful Service/API Integration capability
+- End-to-end execution with real usability (not just scaffolding)
+- Code quality, clear documentation, and ability to demonstrate the solution
 
----
+**Deliverables:**
+1. Fully functional prototype code in a GitHub repository
+2. Development notes file showing all key AI assistant prompts used
+3. Clear documentation of how your solution meets the mandatory requirements
+4. A demonstration of the working prototype in action
 
-## C# Best Practice Validation
+**Context from Challenge Files:**
+Reference the challenge specifications in "WhatsApp Image 2026-06-08 at 5.37.59 PM.jpeg" and "WhatsApp Image 2026-06-08 at 5.37.58 PM.jpeg" for complete mandatory requirements and technology stack details. You may also reference "image.png" for an example solution pattern (AI Code Review GitHub Action).
 
-Checks for:
+**Timeline:** This is a 1-2 day sprint. Focus on working functionality over perfection.
 
-* SOLID Principles
-* Proper Null Handling
-* Async/Await Usage
-* Maintainable Code Structure
-* Readability Improvements
+Build something real, document your AI usage thoroughly, and ship it.
+Prompt 2: GitHub Actions CI/CD Pipeline Generation
+Objective
+Develop a complete, production-ready GitHub Actions YAML workflow that automates code diff extraction, secure Gemini API integration, and posts structured AI review comments directly to Pull Requests.
 
----
+Prompt
 
-## GitHub Integration
+Plaintext
+You are a GitHub Actions workflow engineer and AI integration specialist. Your task is to create a complete, production-ready GitHub Actions workflow file that I can add to my repository to enable automated AI code review using Google Gemini.
 
-Seamlessly integrates into GitHub workflows using GitHub Actions.
+**Context:**
+I have an AI Code Reviewer project that uses the Gemini API to automatically review C# code for violations in three categories:
+1. SOLID principles (Single Responsibility, Dependency Inversion, etc.)
+2. Null-handling errors and potential NullReferenceExceptions
+3. Async/await threading issues, deadlocks, and improper async patterns
 
-Developers receive feedback directly within Pull Request comments.
+**Your Task:**
+Create a complete `.github/workflows/code-review.yml` file that:
 
----
+1. **Triggers** on every Pull Request that modifies `.cs` files
+2. **Extracts** all changed C# code from the PR
+3. **Connects to the Gemini API** securely using GitHub Secrets (the API key should be stored as `GEMINI_API_KEY`)
+4. **Sends the code** to Gemini with a system prompt instructing it to act as an expert C# reviewer looking specifically for SOLID violations, null-handling bugs, and async/await issues
+5. **Posts the AI's review** as an automated comment on the Pull Request in a clean, formatted table that clearly lists:
+   - Issue category (SOLID / Null-Handling / Async-Await)
+   - Specific line or code snippet
+   - Severity (Critical / Warning / Info)
+   - Recommendation for fixing it
+6. **Handles errors gracefully** - if the API call fails, it should still post a fallback message to the PR
+7. **Runs efficiently** - should complete the analysis within 60 seconds for typical code submissions
 
-## Real-Time Feedback
+**Technical Requirements:**
+- Use `actions/checkout@v4` to access the repository code
+- Use the official Google Generative AI API (not a third-party wrapper)
+- Extract only the changed lines from the PR (use `git diff`)
+- Format the Gemini prompt to be strict and expert-level in tone
+- Post results back to the PR using the GitHub API
+- Store the API key securely as a GitHub Secret
+- Include proper logging for debugging
 
-Provides review results within seconds, reducing review delays and accelerating development.
+**Output Format:**
+Return the complete, ready-to-use YAML workflow file. Include comments explaining each section. Make it production-ready so I can copy-paste it directly into `.github/workflows/code-review.yml` and it will work immediately after I set the `GEMINI_API_KEY` secret in my repository settings.
+Agent Loop Design
+The project implements an automated, single-agent CI/CD workflow.
 
----
+Agent: AI Code Reviewer (Gemini API)
 
-# Project Architecture
+Responsibilities:
 
-Developer Creates Pull Request
+Extract code differences (diffs) from GitHub Pull Requests.
 
-↓
+Analyze C# code for SOLID principles and security flaws (SQL Injection, Hardcoded Secrets, etc.).
 
-GitHub Action Trigger
+Identify potential runtime errors (e.g., NullReferenceExceptions).
 
-↓
+Generate corrected C# code snippets.
 
-Python Review Agent
+Formulate a structured Markdown report.
 
-↓
+Output:
 
-Git Diff Extraction
+Final Code Review Report posted automatically as a GitHub PR comment.
 
-↓
+Agent Workflow
 
-Gemini AI Analysis
+Developer Commits C# Code
 
-↓
+Pull Request Opened (main branch)
 
-Review Comment Generation
+GitHub Action Workflow Triggered
 
-↓
+Code Diffs Extracted via Python Script
 
-GitHub Pull Request Comment
+AI Reviewer Agent (Gemini API) Processes Code
 
----
+Final Markdown Report Generated
 
-# Technology Stack
+GitHub Bot Posts Review on PR
 
-## Source Control
+This architecture demonstrates a fully autonomous CI/CD AI Agent capability.
 
-* GitHub
+Prompt Engineering Techniques Used
+Role Prompting: Assigning specific enterprise responsibilities to the AI (e.g., "You are an AI development expert", "You are a GitHub Actions workflow engineer").
 
-## Programming Language
+Structured Output Prompting: Instructing the model to produce output using a specific visual structure, such as a formatted markdown table.
 
-* Python
+Constraint-Based Prompting: Providing explicit rules to enforce challenge mandates, handle API failures gracefully, run within strict time limits (under 60 seconds), and secure API keys.
 
-## AI Model
+Task Decomposition: Breaking down the hackathon requirements into clear deliverables (Code, Notes, Documentation, Demo) and stepping out the exact logic flow for the CI/CD pipeline.
 
-* Google Gemini API
+AI Capabilities Demonstrated
+The project demonstrates:
 
-## Integrations
+✅ Dynamic Code Analysis
 
-* GitHub Actions
-* GitHub REST API (PyGithub)
-* Google GenAI API
+✅ Automated Vulnerability Detection
 
----
+✅ Code Remediation & Fix Generation
 
-# Project Structure
+✅ CI/CD AI Agent Architecture
 
-AI-Code-Reviewer/
+✅ AI-Assisted Infrastructure Setup
 
-├── .github/
+✅ Prompt Engineering
 
-│ └── workflows/
+Development Tools
+Programming Languages: Python, C#
 
-│ └── ai-review.yml
+CI/CD Platform: GitHub Actions
 
-│
+AI API Runtime: Google Gemini 1.5 Flash
 
-├── review_agent.py
+Data Formats: YAML, Markdown, JSON (API Payloads)
 
-├── github_handler.py
+Conclusion
+The AI Code Review GitHub Action uses advanced prompt engineering and an automated CI/CD agent architecture to streamline software development.
 
-├── gemini_client.py
-
-├── formatter.py
-
-├── requirements.txt
-
-├── DEVELOPMENT_NOTES.md
-
-└── README.md
-
----
-
-# Installation
-
-Clone the repository:
-
-git clone <repository-url>
-
-cd AI-Code-Reviewer
-
-Install dependencies:
-
-pip install -r requirements.txt
-
----
-
-# Configuration
-
-Obtain a Gemini API Key from Google AI Studio.
-
-Go to:
-
-GitHub Repository
-
-→ Settings
-
-→ Secrets and Variables
-
-→ Actions
-
-Create a secret named:
-
-GEMINI_API_KEY
-
-Paste your API key.
-
-Ensure Pull Request write permissions are enabled in the workflow.
-
----
-
-# Running the Prototype
-
-Create a Pull Request in the repository.
-
-The GitHub Action will automatically:
-
-* Fetch the Pull Request diff
-* Analyze the code using Gemini AI
-* Generate review suggestions
-* Post the results as a Pull Request comment
-
----
-
-# Sample Output
-
-The generated review may contain:
-
-### Code Quality Issues
-
-Suggestions to improve readability and maintainability.
-
-### SOLID Principle Violations
-
-Recommendations for better object-oriented design.
-
-### Null Handling Improvements
-
-Potential null reference risks.
-
-### Async/Await Recommendations
-
-Suggestions for proper asynchronous programming practices.
-
-### Security Observations
-
-Potential security concerns identified in the code.
-
----
-
-# AI Capability Demonstration
-
-This project demonstrates:
-
-✅ Automated Code Review
-
-✅ External API Integration
-
-✅ GitHub Workflow Automation
-
-✅ AI-Assisted Software Quality Analysis
-
-✅ Real-Time Developer Feedback
-
-These capabilities satisfy the AI Prototype Challenge requirements.
-
----
-
-# Team Contribution
-
-All team members contributed to:
-
-* Design
-* Development
-* Integration
-* Testing
-* Documentation
-* Demonstration
-
----
-
-# License
-
-This project is developed for educational and prototype demonstration purposes.
+The combination of dynamic vulnerability detection, automated code remediation, and seamless integration into the GitHub Pull Request workflow provides an enterprise-grade DevSecOps solution that strictly adheres to the AI Prototype Challenge requirements.
