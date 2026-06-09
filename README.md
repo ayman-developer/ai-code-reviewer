@@ -1,31 +1,281 @@
 # AI Code Reviewer Prototype
 
-A working prototype for the AI Prototype Challenge. This repository contains an AI-powered GitHub Action that automatically reviews Pull Requests specifically focusing on C# best practices.
+## Project Overview
 
-## Deliverables Met
+AI Code Reviewer Prototype is an AI-powered GitHub Action designed to automate code reviews for C# projects.
 
-1. **Fully Functional Prototype**: This repository contains a custom GitHub Action that successfully intercepts `pull_request` events, pulls the git diff, and posts an automated code review comment.
-2. **AI Development Notes**: All AI interactions used to build this prototype are documented in [DEVELOPMENT_NOTES.md](./DEVELOPMENT_NOTES.md), fulfilling the requirement to document hands-on AI assistant usage.
-3. **Mandatory Capability Implemented**: **External API/Service Integration**. The Action integrates with the official Google GenAI API (Gemini) to process code diffs.
-4. **Demonstration**: You can view the automated reviews in the closed Pull Requests of this repository.
+The system automatically analyzes Pull Requests, detects coding issues, checks adherence to C# best practices, and provides intelligent review comments directly within GitHub.
 
-## Technology Stack Used
-- **Source Control**: GitHub
-- **Language**: Python
-- **AI Model**: Google Gemini (Free Tier API)
-- **Integrations**: GitHub REST API (via `PyGithub`), Google GenAI API (`google-genai`).
+This project was developed as part of the AI Prototype Challenge.
 
-## How it Works
-When a Pull Request is opened or synchronized, the Action:
-1. Runs a Dockerized Python script (`review_agent.py`).
-2. Connects to the GitHub repository using the native `GITHUB_TOKEN`.
-3. Fetches the code diff of the Pull Request.
-4. Sends the diff to the Gemini API with a strict system prompt to analyze for **SOLID Principles**, **Null-Handling**, and **Async/Await** implementations.
-5. Posts the analysis back to the Pull Request as a formatted comment.
+---
 
-## Setup Instructions
-If you fork this repository to use the Action, you must:
-1. Obtain a free API key from [Google AI Studio](https://aistudio.google.com/app/apikey).
-2. Go to your repository **Settings** -> **Secrets and variables** -> **Actions**.
-3. Add a New Repository Secret named `GEMINI_API_KEY` with your API key.
-4. Ensure your workflow permissions allow writing pull requests (see `.github/workflows/ai-review.yml`).
+# Problem Statement
+
+Code reviews are an essential part of software development to ensure code quality, maintainability, and security.
+
+However, traditional code reviews often face challenges such as:
+
+* Time-consuming manual reviews
+* Delayed feedback cycles
+* Inconsistent review quality
+* Missed bugs and security vulnerabilities
+
+The objective of this project is to automate the code review process using Artificial Intelligence.
+
+---
+
+# Solution
+
+The AI Code Reviewer integrates directly with GitHub Pull Requests.
+
+When a developer creates or updates a Pull Request, the system:
+
+1. Captures the Pull Request code changes
+2. Extracts the Git Diff
+3. Sends the code changes to Gemini AI
+4. Analyzes the code for quality issues
+5. Checks C# best practices
+6. Generates review suggestions
+7. Posts the review directly on GitHub
+
+This enables developers to receive instant feedback without leaving GitHub.
+
+---
+
+# Key Features
+
+## Automated Pull Request Reviews
+
+Automatically reviews code whenever a Pull Request is opened or updated.
+
+---
+
+## AI-Powered Code Analysis
+
+Uses Google's Gemini AI model to analyze code changes and identify:
+
+* Coding issues
+* Best practice violations
+* Potential bugs
+* Code quality concerns
+
+---
+
+## C# Best Practice Validation
+
+Checks for:
+
+* SOLID Principles
+* Proper Null Handling
+* Async/Await Usage
+* Maintainable Code Structure
+* Readability Improvements
+
+---
+
+## GitHub Integration
+
+Seamlessly integrates into GitHub workflows using GitHub Actions.
+
+Developers receive feedback directly within Pull Request comments.
+
+---
+
+## Real-Time Feedback
+
+Provides review results within seconds, reducing review delays and accelerating development.
+
+---
+
+# Project Architecture
+
+Developer Creates Pull Request
+
+↓
+
+GitHub Action Trigger
+
+↓
+
+Python Review Agent
+
+↓
+
+Git Diff Extraction
+
+↓
+
+Gemini AI Analysis
+
+↓
+
+Review Comment Generation
+
+↓
+
+GitHub Pull Request Comment
+
+---
+
+# Technology Stack
+
+## Source Control
+
+* GitHub
+
+## Programming Language
+
+* Python
+
+## AI Model
+
+* Google Gemini API
+
+## Integrations
+
+* GitHub Actions
+* GitHub REST API (PyGithub)
+* Google GenAI API
+
+---
+
+# Project Structure
+
+AI-Code-Reviewer/
+
+├── .github/
+
+│ └── workflows/
+
+│ └── ai-review.yml
+
+│
+
+├── review_agent.py
+
+├── github_handler.py
+
+├── gemini_client.py
+
+├── formatter.py
+
+├── requirements.txt
+
+├── DEVELOPMENT_NOTES.md
+
+└── README.md
+
+---
+
+# Installation
+
+Clone the repository:
+
+git clone <repository-url>
+
+cd AI-Code-Reviewer
+
+Install dependencies:
+
+pip install -r requirements.txt
+
+---
+
+# Configuration
+
+Obtain a Gemini API Key from Google AI Studio.
+
+Go to:
+
+GitHub Repository
+
+→ Settings
+
+→ Secrets and Variables
+
+→ Actions
+
+Create a secret named:
+
+GEMINI_API_KEY
+
+Paste your API key.
+
+Ensure Pull Request write permissions are enabled in the workflow.
+
+---
+
+# Running the Prototype
+
+Create a Pull Request in the repository.
+
+The GitHub Action will automatically:
+
+* Fetch the Pull Request diff
+* Analyze the code using Gemini AI
+* Generate review suggestions
+* Post the results as a Pull Request comment
+
+---
+
+# Sample Output
+
+The generated review may contain:
+
+### Code Quality Issues
+
+Suggestions to improve readability and maintainability.
+
+### SOLID Principle Violations
+
+Recommendations for better object-oriented design.
+
+### Null Handling Improvements
+
+Potential null reference risks.
+
+### Async/Await Recommendations
+
+Suggestions for proper asynchronous programming practices.
+
+### Security Observations
+
+Potential security concerns identified in the code.
+
+---
+
+# AI Capability Demonstration
+
+This project demonstrates:
+
+✅ Automated Code Review
+
+✅ External API Integration
+
+✅ GitHub Workflow Automation
+
+✅ AI-Assisted Software Quality Analysis
+
+✅ Real-Time Developer Feedback
+
+These capabilities satisfy the AI Prototype Challenge requirements.
+
+---
+
+# Team Contribution
+
+All team members contributed to:
+
+* Design
+* Development
+* Integration
+* Testing
+* Documentation
+* Demonstration
+
+---
+
+# License
+
+This project is developed for educational and prototype demonstration purposes.
