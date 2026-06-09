@@ -1,13 +1,13 @@
-name: 'AI Code Reviewer'
-description: 'Review PRs using AI (Gemini)'
-author: 'AI Assistant'
+name: AI Code Review
+
+description: AI powered code review using Gemini
+
 inputs:
   github_token:
-    description: 'GitHub token'
     required: true
   gemini_api_key:
-    description: 'Gemini API key'
     required: true
+
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
+  using: docker
+  image: Dockerfile
