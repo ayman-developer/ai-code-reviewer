@@ -1,13 +1,13 @@
-AI Usage Note
+## AI Usage Note
 Project Title
-AI Code Review GitHub Action for C#
+## AI Code Review GitHub Action for C#
 
-Purpose
+## Purpose
 This document describes how Artificial Intelligence was used during both the development phase and the final execution of the AI Code Review GitHub Action.
 
 Our project leverages an AI-assisted development workflow and integrates Google's Gemini LLM directly into the CI/CD pipeline to automate C# code analysis, detect security vulnerabilities, and provide inline pull request feedback.
 
-AI Tools Used During Development
+## AI Tools Used During Development
 The following AI tools were utilized to accelerate our development process:
 
 Gemini: Used for generating the core Python backend logic (review_agent.py) and formulating the C# code review prompts.
@@ -18,7 +18,7 @@ Claude: Used for formatting professional project documentation, README files, an
 
 Kiro: Used during the initial requirement analysis and workflow conceptualization phase.
 
-AI-Assisted Development Activities
+## AI-Assisted Development Activities
 Artificial Intelligence acted as a pair-programming assistant in the following areas:
 
 1. CI/CD Architecture & Setup
@@ -33,7 +33,7 @@ A significant portion of development involved crafting the perfect system prompt
 4. Test Case Generation
 We utilized AI to generate complex, enterprise-level C# sample files containing hidden, intentional bugs (e.g., hardcoded passwords and swallowed exceptions) to rigorously test our AI Reviewer's detection capabilities.
 
-AI Capability Implemented
+## AI Capability Implemented
 Unlike traditional static code analyzers (like SonarQube), our project implements Generative AI for dynamic code understanding.
 
 The project demonstrates the following core AI capabilities:
@@ -47,7 +47,7 @@ Instead of just throwing an error code, the AI generates accurate, corrected C# 
 Natural Language Summarization
 The AI translates complex code flaws into easy-to-read, human-like summaries formatted cleanly in Markdown, which are then posted directly as a GitHub comment.
 
-Agent Workflow Implementation
+## Agent Workflow Implementation
 The project acts as a single, fully autonomous CI/CD Review Agent. The workflow is completely automated without manual triggers:
 
 Trigger: A developer commits buggy C# code and opens a Pull Request to the main branch.
@@ -64,7 +64,7 @@ Integration: The GitHub github-actions[bot] automatically posts the AI's review 
 
 Branch Protection: Based on the review, human developers can safely approve or block the merge.
 
-AI Runtime Engine
+## AI Runtime Engine
 Model: Google Gemini 1.5 Flash (via API)
 
 Environment: GitHub Actions CI/CD Cloud Runner
