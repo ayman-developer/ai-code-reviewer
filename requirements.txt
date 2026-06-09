@@ -1,5 +1,5 @@
 PyGithub==2.3.0
-google-generativeai==0.7.2
+google-genai==0.3.0
 pytest==8.2.2
 responses==0.25.0
 requests==2.31.0
