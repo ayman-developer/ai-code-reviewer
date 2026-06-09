@@ -2,8 +2,7 @@ import os
 import sys
 import json
 from github import Github
-from google import genai
-from google.genai import types
+import google.generativeai as genai
 
 def main():
     # Read environment variables injected by GitHub Actions
@@ -51,9 +50,8 @@ def main():
         print("No code changes found in the PR.")
         sys.exit(0)
         
-    # Initialize Gemini Client
     print("Initializing Gemini Client...")
-    client = genai.Client(api_key=gemini_api_key)
+    genai.configure(api_key=gemini_api_key)
     
     prompt = f"""
 You are an expert C# code reviewer. Your job is to analyze the provided git diff (code changes) very carefully. 
@@ -72,13 +70,13 @@ Here is the git diff:
 
     print("Sending diff to Gemini for review...")
     try:
-        response = client.models.generate_content(
-            model='gemini-2.5-flash',
-            contents=prompt,
-        )
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        response = model.generate_content(prompt)
         review_comment = response.text
     except Exception as e:
         print(f"Failed to get response from Gemini: {e}")
+        import traceback
+        traceback.print_exc()
         sys.exit(1)
     
     print("Posting review comment to PR...")
