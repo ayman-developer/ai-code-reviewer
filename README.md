@@ -1,281 +1,48 @@
-# AI Code Reviewer Prototype
+# AI Code Reviewer GitHub Action
 
-## Project Overview
+## Architecture Overview
 
-AI Code Reviewer Prototype is an AI-powered GitHub Action designed to automate code reviews for C# projects.
+The AI Code Reviewer is an automated, AI-powered GitHub Action designed to instantly analyze C# pull requests. The system intercepts code diffs when a Pull Request is opened, specifically targets modified `.cs` files, and uses the Google Gemini 2.5 Flash API to review the code. It then posts inline, line-by-line feedback directly onto the PR diff.
 
-The system automatically analyzes Pull Requests, detects coding issues, checks adherence to C# best practices, and provides intelligent review comments directly within GitHub.
-
-This project was developed as part of the AI Prototype Challenge.
-
----
-
-# Problem Statement
-
-Code reviews are an essential part of software development to ensure code quality, maintainability, and security.
-
-However, traditional code reviews often face challenges such as:
-
-* Time-consuming manual reviews
-* Delayed feedback cycles
-* Inconsistent review quality
-* Missed bugs and security vulnerabilities
-
-The objective of this project is to automate the code review process using Artificial Intelligence.
+### Architecture Diagram
+Developer Opens PR -> GitHub Action Triggers -> Fetch Code Diff (PyGithub) -> Filter for `.cs` Files -> Send to Gemini API -> Receive JSON Array -> Post Inline Comments to GitHub PR.
 
 ---
 
-# Solution
+## Setup Instructions
 
-The AI Code Reviewer integrates directly with GitHub Pull Requests.
-
-When a developer creates or updates a Pull Request, the system:
-
-1. Captures the Pull Request code changes
-2. Extracts the Git Diff
-3. Sends the code changes to Gemini AI
-4. Analyzes the code for quality issues
-5. Checks C# best practices
-6. Generates review suggestions
-7. Posts the review directly on GitHub
-
-This enables developers to receive instant feedback without leaving GitHub.
+1. Copy the `.github/workflows/review.yml` (from this repository) into your own repository's `.github/workflows/` directory.
+2. In your GitHub repository, navigate to **Settings** -> **Secrets and variables** -> **Actions**.
+3. Click **New repository secret**.
+4. Name the secret `GEMINI_API_KEY` and paste your Google Gemini API key as the value.
+5. Note: `GITHUB_TOKEN` is automatically provided by the GitHub Actions runner, so you do not need to set it up manually.
 
 ---
 
-# Key Features
+## Run Instructions
 
-## Automated Pull Request Reviews
-
-Automatically reviews code whenever a Pull Request is opened or updated.
-
----
-
-## AI-Powered Code Analysis
-
-Uses Google's Gemini AI model to analyze code changes and identify:
-
-* Coding issues
-* Best practice violations
-* Potential bugs
-* Code quality concerns
+1. Create a new branch in your repository.
+2. Write or modify a C# (`.cs`) file and intentionally introduce logic flaws (e.g., Unhandled Nulls or `Task.Wait()`).
+3. Commit and push your branch to GitHub.
+4. Open a **Pull Request** against your main branch.
+5. The GitHub Action will automatically trigger. Wait 30-40 seconds for the Action to complete.
+6. Navigate to the **Files changed** tab on your Pull Request to view the automated inline comments posted by the AI reviewer.
 
 ---
 
-## C# Best Practice Validation
+## Assumptions & Limitations
 
-Checks for:
+### Assumptions
+* **Language Support:** The system assumes the codebase uses C# and explicitly filters for `.cs` files. Other languages modified in the same PR will be ignored.
+* **Environment:** The Action runs on an `ubuntu-latest` GitHub runner with a Python 3.x environment.
+* **API Availability:** Assumes the Google Gemini API is highly available and responds within typical timeout bounds.
 
-* SOLID Principles
-* Proper Null Handling
-* Async/Await Usage
-* Maintainable Code Structure
-* Readability Improvements
-
----
-
-## GitHub Integration
-
-Seamlessly integrates into GitHub workflows using GitHub Actions.
-
-Developers receive feedback directly within Pull Request comments.
+### Limitations
+* **Token Limits:** If a Pull Request is exceptionally large (e.g., thousands of lines of code changed in a single file), it may exceed the Gemini API's token context window limit.
+* **Cross-File Context:** The AI currently analyzes individual modified files in isolation based on the `git diff`. It may lack broader cross-file project context (e.g., recognizing that a method is defined differently in another un-modified file).
+* **False Positives:** Like all LLMs, the AI may occasionally misinterpret complex, custom architectural patterns as SOLID violations.
 
 ---
 
-## Real-Time Feedback
-
-Provides review results within seconds, reducing review delays and accelerating development.
-
----
-
-# Project Architecture
-
-Developer Creates Pull Request
-
-↓
-
-GitHub Action Trigger
-
-↓
-
-Python Review Agent
-
-↓
-
-Git Diff Extraction
-
-↓
-
-Gemini AI Analysis
-
-↓
-
-Review Comment Generation
-
-↓
-
-GitHub Pull Request Comment
-
----
-
-# Technology Stack
-
-## Source Control
-
-* GitHub
-
-## Programming Language
-
-* Python
-
-## AI Model
-
-* Google Gemini API
-
-## Integrations
-
-* GitHub Actions
-* GitHub REST API (PyGithub)
-* Google GenAI API
-
----
-
-# Project Structure
-
-AI-Code-Reviewer/
-
-├── .github/
-
-│ └── workflows/
-
-│ └── ai-review.yml
-
-│
-
-├── review_agent.py
-
-├── github_handler.py
-
-├── gemini_client.py
-
-├── formatter.py
-
-├── requirements.txt
-
-├── DEVELOPMENT_NOTES.md
-
-└── README.md
-
----
-
-# Installation
-
-Clone the repository:
-
-git clone <repository-url>
-
-cd AI-Code-Reviewer
-
-Install dependencies:
-
-pip install -r requirements.txt
-
----
-
-# Configuration
-
-Obtain a Gemini API Key from Google AI Studio.
-
-Go to:
-
-GitHub Repository
-
-→ Settings
-
-→ Secrets and Variables
-
-→ Actions
-
-Create a secret named:
-
-GEMINI_API_KEY
-
-Paste your API key.
-
-Ensure Pull Request write permissions are enabled in the workflow.
-
----
-
-# Running the Prototype
-
-Create a Pull Request in the repository.
-
-The GitHub Action will automatically:
-
-* Fetch the Pull Request diff
-* Analyze the code using Gemini AI
-* Generate review suggestions
-* Post the results as a Pull Request comment
-
----
-
-# Sample Output
-
-The generated review may contain:
-
-### Code Quality Issues
-
-Suggestions to improve readability and maintainability.
-
-### SOLID Principle Violations
-
-Recommendations for better object-oriented design.
-
-### Null Handling Improvements
-
-Potential null reference risks.
-
-### Async/Await Recommendations
-
-Suggestions for proper asynchronous programming practices.
-
-### Security Observations
-
-Potential security concerns identified in the code.
-
----
-
-# AI Capability Demonstration
-
-This project demonstrates:
-
-✅ Automated Code Review
-
-✅ External API Integration
-
-✅ GitHub Workflow Automation
-
-✅ AI-Assisted Software Quality Analysis
-
-✅ Real-Time Developer Feedback
-
-These capabilities satisfy the AI Prototype Challenge requirements.
-
----
-
-# Team Contribution
-
-All team members contributed to:
-
-* Design
-* Development
-* Integration
-* Testing
-* Documentation
-* Demonstration
-
----
-
-# License
-
+## License
 This project is developed for educational and prototype demonstration purposes.
