@@ -8,7 +8,6 @@ class SentimentAnalysis
 
         string[] positiveWords = { "excellent", "amazing", "good", "great", "delicious" };
         string[] negativeWords = { "bad", "poor", "terrible", "awful", "slow" };
-
         int score = 0;
 
         foreach (string word in positiveWords)
