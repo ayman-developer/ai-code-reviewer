@@ -51,7 +51,6 @@ def main():
         print("No code changes found in the PR.")
         sys.exit(0)
         
-    # Initialize Gemini Client
     print("Initializing Gemini Client...")
     client = genai.Client(api_key=gemini_api_key)
     
@@ -79,6 +78,8 @@ Here is the git diff:
         review_comment = response.text
     except Exception as e:
         print(f"Failed to get response from Gemini: {e}")
+        import traceback
+        traceback.print_exc()
         sys.exit(1)
     
     print("Posting review comment to PR...")

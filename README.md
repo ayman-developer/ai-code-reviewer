@@ -1,31 +1,48 @@
-# AI Code Reviewer Prototype
+# AI Code Reviewer GitHub Action
 
-A working prototype for the AI Prototype Challenge. This repository contains an AI-powered GitHub Action that automatically reviews Pull Requests specifically focusing on C# best practices.
+## Architecture Overview
 
-## Deliverables Met
+The AI Code Reviewer is an automated, AI-powered GitHub Action designed to instantly analyze C# pull requests. The system intercepts code diffs when a Pull Request is opened, specifically targets modified `.cs` files, and uses the Google Gemini 2.5 Flash API to review the code. It then posts inline, line-by-line feedback directly onto the PR diff.
 
-1. **Fully Functional Prototype**: This repository contains a custom GitHub Action that successfully intercepts `pull_request` events, pulls the git diff, and posts an automated code review comment.
-2. **AI Development Notes**: All AI interactions used to build this prototype are documented in [DEVELOPMENT_NOTES.md](./DEVELOPMENT_NOTES.md), fulfilling the requirement to document hands-on AI assistant usage.
-3. **Mandatory Capability Implemented**: **External API/Service Integration**. The Action integrates with the official Google GenAI API (Gemini) to process code diffs.
-4. **Demonstration**: You can view the automated reviews in the closed Pull Requests of this repository.
+### Architecture Diagram
+Developer Opens PR -> GitHub Action Triggers -> Fetch Code Diff (PyGithub) -> Filter for `.cs` Files -> Send to Gemini API -> Receive JSON Array -> Post Inline Comments to GitHub PR.
 
-## Technology Stack Used
-- **Source Control**: GitHub
-- **Language**: Python
-- **AI Model**: Google Gemini (Free Tier API)
-- **Integrations**: GitHub REST API (via `PyGithub`), Google GenAI API (`google-genai`).
-
-## How it Works
-When a Pull Request is opened or synchronized, the Action:
-1. Runs a Dockerized Python script (`review_agent.py`).
-2. Connects to the GitHub repository using the native `GITHUB_TOKEN`.
-3. Fetches the code diff of the Pull Request.
-4. Sends the diff to the Gemini API with a strict system prompt to analyze for **SOLID Principles**, **Null-Handling**, and **Async/Await** implementations.
-5. Posts the analysis back to the Pull Request as a formatted comment.
+---
 
 ## Setup Instructions
-If you fork this repository to use the Action, you must:
-1. Obtain a free API key from [Google AI Studio](https://aistudio.google.com/app/apikey).
-2. Go to your repository **Settings** -> **Secrets and variables** -> **Actions**.
-3. Add a New Repository Secret named `GEMINI_API_KEY` with your API key.
-4. Ensure your workflow permissions allow writing pull requests (see `.github/workflows/ai-review.yml`).
+
+1. Copy the `.github/workflows/review.yml` (from this repository) into your own repository's `.github/workflows/` directory.
+2. In your GitHub repository, navigate to **Settings** -> **Secrets and variables** -> **Actions**.
+3. Click **New repository secret**.
+4. Name the secret `GEMINI_API_KEY` and paste your Google Gemini API key as the value.
+5. Note: `GITHUB_TOKEN` is automatically provided by the GitHub Actions runner, so you do not need to set it up manually.
+
+---
+
+## Run Instructions
+
+1. Create a new branch in your repository.
+2. Write or modify a C# (`.cs`) file and intentionally introduce logic flaws (e.g., Unhandled Nulls or `Task.Wait()`).
+3. Commit and push your branch to GitHub.
+4. Open a **Pull Request** against your main branch.
+5. The GitHub Action will automatically trigger. Wait 30-40 seconds for the Action to complete.
+6. Navigate to the **Files changed** tab on your Pull Request to view the automated inline comments posted by the AI reviewer.
+
+---
+
+## Assumptions & Limitations
+
+### Assumptions
+* **Language Support:** The system assumes the codebase uses C# and explicitly filters for `.cs` files. Other languages modified in the same PR will be ignored.
+* **Environment:** The Action runs on an `ubuntu-latest` GitHub runner with a Python 3.x environment.
+* **API Availability:** Assumes the Google Gemini API is highly available and responds within typical timeout bounds.
+
+### Limitations
+* **Token Limits:** If a Pull Request is exceptionally large (e.g., thousands of lines of code changed in a single file), it may exceed the Gemini API's token context window limit.
+* **Cross-File Context:** The AI currently analyzes individual modified files in isolation based on the `git diff`. It may lack broader cross-file project context (e.g., recognizing that a method is defined differently in another un-modified file).
+* **False Positives:** Like all LLMs, the AI may occasionally misinterpret complex, custom architectural patterns as SOLID violations.
+
+---
+
+## License
+This project is developed for educational and prototype demonstration purposes.
