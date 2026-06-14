@@ -4,6 +4,7 @@ import json
 from github import Github
 from google import genai
 from google.genai import types
+import time
 
 def main():
     # Read environment variables injected by GitHub Actions
@@ -70,17 +71,27 @@ Here is the git diff:
 """
 
     print("Sending diff to Gemini for review...")
-    try:
-        response = client.models.generate_content(
-            model='gemini-2.5-flash',
-            contents=prompt,
-        )
-        review_comment = response.text
-    except Exception as e:
-        print(f"Failed to get response from Gemini: {e}")
-        import traceback
-        traceback.print_exc()
-        sys.exit(1)
+    max_retries = 3
+    retry_delay = 10
+    
+    for attempt in range(max_retries):
+        try:
+            response = client.models.generate_content(
+                model='gemini-2.5-flash',
+                contents=prompt,
+            )
+            review_comment = response.text
+            break # Success, break out of the retry loop
+        except Exception as e:
+            print(f"Attempt {attempt + 1} failed: {e}")
+            if attempt < max_retries - 1:
+                print(f"Retrying in {retry_delay} seconds...")
+                time.sleep(retry_delay)
+            else:
+                print(f"Failed to get response from Gemini after {max_retries} attempts.")
+                import traceback
+                traceback.print_exc()
+                sys.exit(1)
     
     print("Posting review comment to PR...")
     try:
