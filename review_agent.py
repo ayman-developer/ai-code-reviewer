@@ -71,13 +71,13 @@ Here is the git diff:
 """
 
     print("Sending diff to Gemini for review...")
-    max_retries = 3
-    retry_delay = 10
+    max_retries = 5
+    retry_delay = 30
     
     for attempt in range(max_retries):
         try:
             response = client.models.generate_content(
-                model='gemini-1.5-flash',
+                model='gemini-2.5-flash',
                 contents=prompt,
             )
             review_comment = response.text
