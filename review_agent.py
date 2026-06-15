@@ -71,26 +71,36 @@ Here is the git diff:
 """
 
     print("Sending diff to Gemini for review...")
-    models_to_try = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro']
+    
+    # We must use gemini-2.5-flash as the user's API key lacks quota for other models.
+    # 503 errors are temporary traffic spikes, so we must wait and retry.
+    max_retries = 6
+    retry_delay = 15
     review_comment = None
     
-    for model_name in models_to_try:
+    for attempt in range(max_retries):
         try:
-            print(f"Attempting to generate review using {model_name}...")
+            print(f"Attempt {attempt + 1}: Generating review with gemini-2.5-flash...")
             response = client.models.generate_content(
-                model=model_name,
+                model='gemini-2.5-flash',
                 contents=prompt,
             )
             review_comment = response.text
-            print(f"Successfully generated review using {model_name}!")
-            break # Success, break out of the fallback loop
+            print("Successfully generated review!")
+            break
         except Exception as e:
-            print(f"Model {model_name} failed: {e}")
-            print("Falling back to next available model instantly...")
-            
-    if not review_comment:
-        print("CRITICAL ERROR: All AI models failed to respond. Google API might be down.")
-        sys.exit(1)
+            error_msg = str(e)
+            if "503" in error_msg:
+                print(f"Google API is currently overloaded (503 High Demand).")
+            else:
+                print(f"Error encountered: {error_msg}")
+                
+            if attempt < max_retries - 1:
+                print(f"Waiting {retry_delay} seconds before trying again (Attempt {attempt + 2}/{max_retries})...")
+                time.sleep(retry_delay)
+            else:
+                print("CRITICAL ERROR: Google API remained unavailable after maximum retries.")
+                sys.exit(1)
     
     print("Posting review comment to PR...")
     try:
