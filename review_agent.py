@@ -71,27 +71,26 @@ Here is the git diff:
 """
 
     print("Sending diff to Gemini for review...")
-    max_retries = 5
-    retry_delay = 30
+    models_to_try = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro']
+    review_comment = None
     
-    for attempt in range(max_retries):
+    for model_name in models_to_try:
         try:
+            print(f"Attempting to generate review using {model_name}...")
             response = client.models.generate_content(
-                model='gemini-2.5-flash',
+                model=model_name,
                 contents=prompt,
             )
             review_comment = response.text
-            break # Success, break out of the retry loop
+            print(f"Successfully generated review using {model_name}!")
+            break # Success, break out of the fallback loop
         except Exception as e:
-            print(f"Attempt {attempt + 1} failed: {e}")
-            if attempt < max_retries - 1:
-                print(f"Retrying in {retry_delay} seconds...")
-                time.sleep(retry_delay)
-            else:
-                print(f"Failed to get response from Gemini after {max_retries} attempts.")
-                import traceback
-                traceback.print_exc()
-                sys.exit(1)
+            print(f"Model {model_name} failed: {e}")
+            print("Falling back to next available model instantly...")
+            
+    if not review_comment:
+        print("CRITICAL ERROR: All AI models failed to respond. Google API might be down.")
+        sys.exit(1)
     
     print("Posting review comment to PR...")
     try:
