@@ -4,6 +4,7 @@ import json
 from github import Github
 from google import genai
 from google.genai import types
+import time
 
 def main():
     # Read environment variables injected by GitHub Actions
@@ -51,7 +52,6 @@ def main():
         print("No code changes found in the PR.")
         sys.exit(0)
         
-    # Initialize Gemini Client
     print("Initializing Gemini Client...")
     client = genai.Client(api_key=gemini_api_key)
     
@@ -71,15 +71,36 @@ Here is the git diff:
 """
 
     print("Sending diff to Gemini for review...")
-    try:
-        response = client.models.generate_content(
-            model='gemini-2.5-flash',
-            contents=prompt,
-        )
-        review_comment = response.text
-    except Exception as e:
-        print(f"Failed to get response from Gemini: {e}")
-        sys.exit(1)
+    
+    # We must use gemini-2.5-flash as the user's API key lacks quota for other models.
+    # 503 errors are temporary traffic spikes, so we must wait and retry.
+    max_retries = 6
+    retry_delay = 15
+    review_comment = None
+    
+    for attempt in range(max_retries):
+        try:
+            print(f"Attempt {attempt + 1}: Generating review with gemini-2.5-flash...")
+            response = client.models.generate_content(
+                model='gemini-2.5-flash',
+                contents=prompt,
+            )
+            review_comment = response.text
+            print("Successfully generated review!")
+            break
+        except Exception as e:
+            error_msg = str(e)
+            if "503" in error_msg:
+                print(f"Google API is currently overloaded (503 High Demand).")
+            else:
+                print(f"Error encountered: {error_msg}")
+                
+            if attempt < max_retries - 1:
+                print(f"Waiting {retry_delay} seconds before trying again (Attempt {attempt + 2}/{max_retries})...")
+                time.sleep(retry_delay)
+            else:
+                print("CRITICAL ERROR: Google API remained unavailable after maximum retries.")
+                sys.exit(1)
     
     print("Posting review comment to PR...")
     try:

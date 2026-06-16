@@ -1,0 +1,27 @@
+[
+  {
+    "file": "input_bad_code.cs",
+    "line": 15,
+    "description": "CRITICAL: Potential NullReferenceException. The `.FirstOrDefault()` method returns null if no user is found. Accessing `user.Email` on the next line will crash the application. Always check for null before accessing properties: `if (user == null) return;`"
+  },
+  {
+    "file": "input_bad_code.cs",
+    "line": 24,
+    "description": "CRITICAL: Thread Blocking Deadlock. Using `.Result` on an async Task synchronously blocks the executing thread, which can cause deadlocks in ASP.NET or UI applications. Use `await` instead: `var paymentResult = await ProcessPaymentExternalAsync(invoice.Amount);`"
+  },
+  {
+    "file": "input_bad_code.cs",
+    "line": 30,
+    "description": "WARNING: Fire and Forget execution. Calling an async method without `await` means exceptions thrown inside `NotifyUserAsync` will be swallowed and you cannot track its completion. Use `await NotifyUserAsync(...)`"
+  },
+  {
+    "file": "input_bad_code.cs",
+    "line": 38,
+    "description": "CRITICAL: Thread Blocking Deadlock. Using `.Wait()` on an async Task blocks the thread. Use `await` instead: `await _dbContext.SaveChangesAsync();`"
+  },
+  {
+    "file": "input_bad_code.cs",
+    "line": 47,
+    "description": "CRITICAL: Async Void is dangerous. `async void` methods cannot be awaited and their exceptions crash the process. Change the return type to `async Task`."
+  }
+]
